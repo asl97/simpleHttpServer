@@ -2,7 +2,6 @@
 simpleHttpServer request handler.
 """
 
-import logging
 import socket
 import urllib
 import cgi
@@ -16,14 +15,14 @@ from config import STATIC_FILES_DIR
 from config import THREAD_POOL_SIZE
 from config import SOCKET_BACKLOG_SIZE
 
-Log = logging.getLogger('simpleHttpServer.server')
+def Log(string): print string
 
 
-def handle_request(clientsock):
+def handle_request(clientsock, addr):
 
     data = clientsock.recv(RECV_BUFSIZ)
 
-    Log.debug('Request received:\n%s', data)
+    #Log('Request received: %s' % data)
 
     request = parse_http_request(data)
 
@@ -35,8 +34,8 @@ def handle_request(clientsock):
             # redirect browser - doing basically what apache does
             response = HttpResponse(protocol=request.protocol, status_code=301)
             response.headers['Location'] = path + "/"
-            Log.info('GET %s %s %s %s',
-                request.request_uri, request.protocol, request.get_range(), response.status_code)
+            Log('%s GET "%s" %s %s %s' %
+                (addr[0], request.request_uri, request.protocol, request.get_range(), response.status_code))
             response.write_to(clientsock)
             clientsock.close()
             return None
@@ -53,8 +52,8 @@ def handle_request(clientsock):
                 response = HttpResponse(protocol=request.protocol, status_code=404)
                 response.headers['Content-type'] = 'text/plain'
                 response.content = 'No permission to list directory'
-                Log.info('GET %s %s %s %s',
-                    request.request_uri, request.protocol, request.get_range(), response.status_code)
+                Log('%s GET "%s" %s %s %s' %
+                    (addr[0], request.request_uri, request.protocol, request.get_range(), response.status_code))
                 response.write_to(clientsock)
                 clientsock.close()
                 return None
@@ -82,8 +81,8 @@ def handle_request(clientsock):
             response.headers['Content-Length'] = len(f)
             response.headers['Accept-Ranges'] = 'bytes'
             response.content = f
-            Log.info('GET %s %s %s %s',
-                request.request_uri, request.protocol, request.get_range(), response.status_code)
+            Log('%s GET "%s" %s %s %s' %
+                (addr[0], request.request_uri, request.protocol, request.get_range(), response.status_code))
             response.write_to(clientsock)
             clientsock.close()
             return None
@@ -104,8 +103,8 @@ def handle_request(clientsock):
         response.headers['Content-type'] = 'text/plain'
         response.content = 'This file does not exist!'
 
-    Log.info('GET %s %s %s %s',
-             request.request_uri, request.protocol, request.get_range(), response.status_code)
+    Log('%s GET "%s" %s %s %s' %
+        (addr[0], request.request_uri, request.protocol, request.get_range(), response.status_code))
 
     response.write_to(clientsock)
     clientsock.close()
@@ -125,15 +124,15 @@ def run(host, port):
     serversock.bind(address)
     serversock.listen(SOCKET_BACKLOG_SIZE)
 
-    Log.info('simpleHttpServer started on %s:%s' % (host, port, ))
+    Log('simpleHttpServer started on %s:%s' % (host, port))
 
     pool = ThreadPool(THREAD_POOL_SIZE)
 
     while True:
-        Log.debug('Waiting for connection...')
+        #Log('Waiting for connection...')
 
         clientsock, addr = serversock.accept()
-        Log.debug('Connected from: %s', addr)
+        #Log('Connected from: %s' % addr)
 
-        pool.add_task(handle_request, clientsock)
+        pool.add_task(handle_request, clientsock, addr)
 
