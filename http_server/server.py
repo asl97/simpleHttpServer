@@ -59,7 +59,7 @@ def handle_request(clientsock, addr):
                 return None
             list.sort(key=lambda a: a.lower())
             f = str()
-            displaypath = cgi.escape(urllib.unquote(path))
+            displaypath = cgi.escape(urllib.unquote(request.request_uri))
             f += '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'
             f += "<html>\n<title>Directory listing for %s</title>\n" % displaypath
             f +="<body>\n<h2>Directory listing for %s</h2>\n" % displaypath
@@ -72,7 +72,7 @@ def handle_request(clientsock, addr):
                     displayname = name + "/"
                     linkname = name + "/"
                 if os.path.islink(fullname):
-                    displayname = name + "@"
+                    displayname = name + "/" # "@"
                     # Note: a link to a directory displays with @ and links with /
                 f += '<li><a href="%s">%s</a>\n' % (urllib.quote(linkname), cgi.escape(displayname))
             f += "</ul>\n<hr>\n</body>\n</html>\n"

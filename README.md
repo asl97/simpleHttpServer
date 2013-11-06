@@ -61,5 +61,5 @@
 * And so much more ...
 
 #### Changelog:
-* Improve usability by added support for index.htmlz
+* Improve usability by added support for index.html
 * Clone this git repository
