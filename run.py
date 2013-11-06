@@ -9,7 +9,6 @@ from config import setup_logging
 
 def Log(string): print string
 
-
 if __name__ == '__main__':
     setup_logging()
 
