@@ -2,13 +2,12 @@
 simpleHttpServer runner.
 """
 
-import logging
 from http_server.server import run
 from config import HOST
 from config import PORT
 from config import setup_logging
 
-Log = logging.getLogger('simpleHttpServer.run')
+def Log(string): print string
 
 
 if __name__ == '__main__':
@@ -17,4 +16,4 @@ if __name__ == '__main__':
     try:
         run(host=HOST, port=PORT)
     except KeyboardInterrupt:
-        Log.info('simpleHttpServer stopped')
+        Log('simpleHttpServer stopped')
