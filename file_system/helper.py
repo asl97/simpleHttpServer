@@ -64,8 +64,8 @@ class File(object):
                 remaining_bytes -= file_chunk_size
 
 
-def get_file(request_uri):
-    fn = STATIC_FILES_DIR + request_uri
+def get_file(fn):
+    request_uri = fn.split("/",1)[-1]
     fsize = None
     exists = False
     mime_type = ''

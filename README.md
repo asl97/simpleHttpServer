@@ -2,6 +2,7 @@
 
 ##### Functionality:
 * multi-threaded using thread pool
+* support for index.html and index.htm, if there isn't one, it generate one on the fly like the SimpleHttpServer
 * support for GET requests only
 * support for static content only
 * support for mime types
@@ -59,3 +60,6 @@
 * Templating
 * And so much more ...
 
+#### Changelog:
+* Improve usability by added support for index.htmlz
+* Clone this git repository
